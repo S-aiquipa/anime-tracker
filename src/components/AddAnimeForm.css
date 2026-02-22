@@ -1,0 +1,44 @@
+.anime-form {
+  position: relative;
+  max-width: 400px;
+}
+
+.anime-input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.anime-options {
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  padding: 5px;
+  list-style: none;
+  background: #000000;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.anime-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  transition: background 0.2s;
+}
+
+.anime-option:hover {
+  background: #f0f0f0;
+}
+
+.anime-image {
+  width: 50px;
+  height: 70px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.anime-info {
+  display: flex;
+  flex-direction: column;
+}

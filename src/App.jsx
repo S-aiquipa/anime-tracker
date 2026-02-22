@@ -3,6 +3,7 @@ import AddAnimeForm from "./components/AddAnimeForm";
 import AnimeList from "./components/AnimeList";
 
 function App() {
+  //STATE VARIABLES
   const [animes, setAnimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,10 +15,12 @@ function App() {
 
     fetch("http://localhost:5000/animes")
       .then((res) => {
+        console.log("Raw Response:", res);
         if (!res.ok) throw new Error("Failed to fetch anime list");
         return res.json();
       })
       .then((data) => {
+        console.log("Parsed JSON Data:", data);
         setAnimes(data);
         setLoading(false);
       })
@@ -33,11 +36,11 @@ function App() {
   }, []);
 
   // Add anime
-  const addAnime = (title) => {
+  const addAnime = (animeData) => {
     fetch("http://localhost:5000/animes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title }),
+      body: JSON.stringify(animeData),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Anime already exists or server error");
@@ -48,9 +51,13 @@ function App() {
   };
 
   // Mark as watched
-  const markWatched = (title) => {
-    fetch(`http://localhost:5000/animes/${encodeURIComponent(title)}`, {
+  const markWatched = (id, newStatus, rating = null) => {
+    const body = { status: newStatus };
+    if (rating !== null) body.rating = rating;
+    fetch(`http://localhost:5000/animes/${id}`, {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to update anime");
@@ -59,7 +66,9 @@ function App() {
       .then((updated) =>
         setAnimes(
           animes.map((a) =>
-            a.title === updated.title ? { ...a, status: updated.status } : a,
+            a._id === updated._id
+              ? { ...a, status: updated.status, rating: updated.rating }
+              : a,
           ),
         ),
       )
@@ -67,14 +76,15 @@ function App() {
   };
 
   // Delete anime
-  const deleteAnime = (title) => {
-    fetch(`http://localhost:5000/animes/${encodeURIComponent(title)}`, {
+  const deleteAnime = (id) => {
+    fetch(`http://localhost:5000/animes/${id}`, {
       method: "DELETE",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to delete anime");
-        setAnimes(animes.filter((a) => a.title !== title));
+        return res.json();
       })
+      .then(() => setAnimes(animes.filter((a) => a._id !== id)))
       .catch((err) => setError(err.message));
   };
 
