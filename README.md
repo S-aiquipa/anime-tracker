@@ -1,16 +1,73 @@
-# React + Vite
+# 🎌 Anime Tracker — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend of Anime Tracker, a web app to track the anime you've watched, are watching, or want to watch — inspired by the Spotify playlist UI.
 
-Currently, two official plugins are available:
+> 🔗 Backend repository: [anime-tracker-backend](https://github.com/your-username/anime-tracker-backend)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+- 🔐 Login & Register UI with JWT authentication
+- 🔍 Search anime by name with debounced input
+- ➕ Add anime to your personal list
+- 📋 Change status: Want to watch / Watching / Completed
+- ⭐ Rate anime from 1 to 5 stars
+- 🗑️ Delete anime from your list
+- 🎨 Spotify-inspired dark playlist design
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+- React (Vite)
+- CSS (custom design, no UI library)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js installed
+- Backend server running ([see backend repo](https://github.com/your-username/anime-tracker-backend))
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/anime-tracker-frontend.git
+cd anime-tracker-frontend
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Start the development server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+> ⚠️ Make sure the backend is running on `http://localhost:5000` before starting the frontend.
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── AddAnimeForm.jsx   # Search bar + anime suggestions dropdown
+│   ├── AddAnimeForm.css
+│   ├── AnimeList.jsx      # Playlist-style anime table
+│   ├── AnimeList.css
+│   ├── Auth.jsx           # Login & Register forms
+│   └── Auth.css
+└── App.jsx                # Main app, routing, state management
+```
+
+## 📸 Screenshots
+
+_Coming soon_
+
+## 👨‍💻 Author
+
+Made with ❤️ from Lima, Peru 🇵🇪  
+First full stack project — Software Engineering student.

@@ -1,39 +1,61 @@
 import { useState, useEffect } from "react";
 import "./AddAnimeForm.css";
 
-function AddAnimeForm({ onAdd }) {
+function AddAnimeForm({ onAdd, token }) {
   const [query, setQuery] = useState("");
-  const [animeOptions, setAnimeOptions] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (query.length > 2) {
-        fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=5`)
-          .then((res) => res.json())
-          .then((data) => {
-            setAnimeOptions(data.data || []);
-          })
-          .catch((err) => console.error(err));
-      } else {
-        setAnimeOptions([]);
-      }
-    }, 500); // espera 500ms antes de hacer la petición
+    if (query.length <= 2) {
+      setOptions([]);
+      setError("");
+      return;
+    }
 
-    return () => clearTimeout(delayDebounce);
+    const delay = setTimeout(() => {
+      fetch(`/search?q=${query}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.length === 0) {
+            setError(
+              "No results found. MyAnimeList may be unavailable, try again later.",
+            );
+          } else {
+            setError("");
+          }
+          setOptions(data);
+        })
+        .catch(() => setError("Search unavailable, try again later."));
+    }, 500);
+
+    return () => clearTimeout(delay);
   }, [query]);
 
-  const handleSelect = (anime) => {
-    const animeData = {
-      title: anime.title,
-      year: anime.year || "Undefined",
-      episodes: anime.episodes || "N/A",
-      studio: anime.studios?.map((s) => s.name).join(", ") || "Undefined",
-      image: anime.images?.jpg?.image_url || "",
-      type: anime.type || "Undefined",
-    };
-    onAdd(animeData);
-    setQuery("");
-    setAnimeOptions([]);
+  const handleSelect = async (anime) => {
+    try {
+      const response = await fetch("/animes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ mal_id: anime.mal_id }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        onAdd(data);
+        setQuery("");
+        setOptions([]);
+        setError("");
+      } else {
+        console.error("Error:", data.error);
+        alert(data.error);
+      }
+    } catch (err) {
+      console.error("Error en la petición:", err);
+    }
   };
 
   return (
@@ -46,25 +68,26 @@ function AddAnimeForm({ onAdd }) {
         className="anime-input"
       />
 
-      {animeOptions.length > 0 && (
+      {/* Error message */}
+      {error && <p className="search-error">{error}</p>}
+
+      {/* Lista de sugerencias */}
+      {options.length > 0 && (
         <ul className="anime-options">
-          {animeOptions.map((anime) => (
+          {options.map((anime) => (
             <li
               key={anime.mal_id}
-              className="anime-option"
-              onClick={() => handleSelect(anime)}
+              onClick={() => {
+                console.log("Anime seleccionado:", anime);
+                handleSelect(anime);
+              }}
             >
               <img
                 src={anime.images?.jpg?.image_url}
                 alt={anime.title}
-                className="anime-image"
+                width="40"
               />
-              <div className="anime-info">
-                <strong>{anime.title}</strong> <br />
-                <small>
-                  {anime.type} • {anime.year || "Año desconocido"}
-                </small>
-              </div>
+              {anime.title}
             </li>
           ))}
         </ul>

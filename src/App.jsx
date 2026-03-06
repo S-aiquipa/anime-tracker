@@ -1,26 +1,40 @@
 import { useEffect, useState } from "react";
 import AddAnimeForm from "./components/AddAnimeForm";
 import AnimeList from "./components/AnimeList";
+import Auth from "./components/Auth";
 
 function App() {
-  //STATE VARIABLES
   const [animes, setAnimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [username, setUsername] = useState(localStorage.getItem("username"));
 
-  // Function to load anime list (used on startup and retry)
+  const handleLogin = (newToken, newUsername) => {
+    setToken(newToken);
+    setUsername(newUsername);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    setToken(null);
+    setUsername(null);
+    setAnimes([]);
+  };
+
   const loadAnimes = () => {
     setLoading(true);
     setError(null);
 
-    fetch("http://localhost:5000/animes")
+    fetch("/animes", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((res) => {
-        console.log("Raw Response:", res);
         if (!res.ok) throw new Error("Failed to fetch anime list");
         return res.json();
       })
       .then((data) => {
-        console.log("Parsed JSON Data:", data);
         setAnimes(data);
         setLoading(false);
       })
@@ -30,33 +44,24 @@ function App() {
       });
   };
 
-  // Load anime list when app starts
   useEffect(() => {
-    loadAnimes();
-  }, []);
+    if (token) loadAnimes();
+  }, [token]);
 
-  // Add anime
   const addAnime = (animeData) => {
-    fetch("http://localhost:5000/animes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(animeData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Anime already exists or server error");
-        return res.json();
-      })
-      .then((anime) => setAnimes([...animes, anime]))
-      .catch((err) => setError(err.message));
+    setAnimes([...animes, animeData]);
   };
 
-  // Mark as watched
   const markWatched = (id, newStatus, rating = null) => {
     const body = { status: newStatus };
     if (rating !== null) body.rating = rating;
-    fetch(`http://localhost:5000/animes/${id}`, {
+
+    fetch(`/animes/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(body),
     })
       .then((res) => {
@@ -75,10 +80,10 @@ function App() {
       .catch((err) => setError(err.message));
   };
 
-  // Delete anime
   const deleteAnime = (id) => {
-    fetch(`http://localhost:5000/animes/${id}`, {
+    fetch(`/animes/${id}`, {
       method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to delete anime");
@@ -88,11 +93,42 @@ function App() {
       .catch((err) => setError(err.message));
   };
 
+  // If no token, show login/register page
+  if (!token) {
+    return <Auth onLogin={handleLogin} />;
+  }
+
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Anime Tracker</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h1>Anime Tracker</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <span style={{ color: "#888", fontSize: "0.9rem" }}>
+            👋 {username}
+          </span>
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "#b33a3a",
+              color: "#fff",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "20px",
+              cursor: "pointer",
+              fontSize: "0.85rem",
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
 
-      {/* Show loading or error */}
       {loading && <p>Loading anime list...</p>}
       {error && (
         <div style={{ color: "red" }}>
@@ -101,10 +137,9 @@ function App() {
         </div>
       )}
 
-      {/* Show form and list only when not loading */}
       {!loading && !error && (
         <>
-          <AddAnimeForm onAdd={addAnime} />
+          <AddAnimeForm onAdd={addAnime} token={token} />
           <AnimeList
             animes={animes}
             onWatched={markWatched}
