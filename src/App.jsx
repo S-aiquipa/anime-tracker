@@ -4,8 +4,6 @@ import AnimeList from "./components/AnimeList";
 import Auth from "./components/Auth";
 import API_URL from "./api";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
-
 function App() {
   const [animes, setAnimes] = useState([]);
   const [loading, setLoading] = useState(true);
