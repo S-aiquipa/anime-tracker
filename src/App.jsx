@@ -28,22 +28,21 @@ function App() {
     setLoading(true);
     setError(null);
 
-    (fetch(`${API_URL}/animes`),
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch anime list");
-          return res.json();
-        })
-        .then((data) => {
-          setAnimes(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setLoading(false);
-        }));
+    fetch(`${API_URL}/animes`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch anime list");
+        return res.json();
+      })
+      .then((data) => {
+        setAnimes(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
