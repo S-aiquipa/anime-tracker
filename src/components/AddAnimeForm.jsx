@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./AddAnimeForm.css";
+import API_URL from "../api";
 
 function AddAnimeForm({ onAdd, token }) {
   const [query, setQuery] = useState("");

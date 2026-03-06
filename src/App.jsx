@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddAnimeForm from "./components/AddAnimeForm";
 import AnimeList from "./components/AnimeList";
 import Auth from "./components/Auth";
+import API_URL from "./api";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 

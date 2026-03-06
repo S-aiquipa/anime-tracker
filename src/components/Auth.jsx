@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./Auth.css";
+import API_URL from "../api";
 
 function Auth({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
