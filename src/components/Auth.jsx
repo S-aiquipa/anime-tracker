@@ -15,7 +15,7 @@ function Auth({ onLogin }) {
     setError("");
     setLoading(true);
 
-    const url = isLogin ? "/login" : "/register";
+    const url = isLogin ? `${API_URL}/login` : `${API_URL}/register`;
     const body = isLogin
       ? { email: form.email, password: form.password }
       : { username: form.username, email: form.email, password: form.password };

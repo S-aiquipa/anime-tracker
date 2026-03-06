@@ -3,6 +3,8 @@ import AddAnimeForm from "./components/AddAnimeForm";
 import AnimeList from "./components/AnimeList";
 import Auth from "./components/Auth";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 function App() {
   const [animes, setAnimes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,21 +29,22 @@ function App() {
     setLoading(true);
     setError(null);
 
-    fetch("/animes", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch anime list");
-        return res.json();
-      })
-      .then((data) => {
-        setAnimes(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    (fetch(`${API_URL}/animes`),
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch anime list");
+          return res.json();
+        })
+        .then((data) => {
+          setAnimes(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err.message);
+          setLoading(false);
+        }));
   };
 
   useEffect(() => {
@@ -56,7 +59,7 @@ function App() {
     const body = { status: newStatus };
     if (rating !== null) body.rating = rating;
 
-    fetch(`/animes/${id}`, {
+    fetch(`${API_URL}/animes/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -81,7 +84,7 @@ function App() {
   };
 
   const deleteAnime = (id) => {
-    fetch(`/animes/${id}`, {
+    fetch(`${API_URL}/animes/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     })

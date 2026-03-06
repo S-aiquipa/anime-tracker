@@ -14,7 +14,7 @@ function AddAnimeForm({ onAdd, token }) {
     }
 
     const delay = setTimeout(() => {
-      fetch(`/search?q=${query}`)
+      fetch(`${API_URL}/search?q=${query}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.length === 0) {
@@ -34,7 +34,7 @@ function AddAnimeForm({ onAdd, token }) {
 
   const handleSelect = async (anime) => {
     try {
-      const response = await fetch("/animes", {
+      const response = await fetch(`${API_URL}/animes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
