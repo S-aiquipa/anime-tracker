@@ -67,6 +67,10 @@ src/
 
 _Coming soon_
 
+## 🌐 Live Demo
+
+https://anime-tracker-wheat-sigma.vercel.app
+
 ## 👨‍💻 Author
 
 Made with ❤️ from Lima, Peru 🇵🇪  
